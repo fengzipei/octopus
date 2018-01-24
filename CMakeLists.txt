@@ -3,7 +3,7 @@ project(dmfs)
 
 # Compiler options
 set (CMAKE_C_FLAGS "-Wall -Wno-deprecated-declarations -Wsign-compare")
-set (CMAKE_CXX_FLAGS "-g ${CMAKE_C_FLAGS} -std=c++11 -Wall -O0 -DTHREAD -D_FILE_OFFSET_BITS=64 -libverbs -lfuse")
+set (CMAKE_CXX_FLAGS "-g ${CMAKE_C_FLAGS} -std=c++11 -Wall -O0 -DTHREAD -D_FILE_OFFSET_BITS=64 -libverbs -lfuse -lrdmacm")
 
 option (SANITIZE "Turn on sanitization" OFF)
 if (SANITIZE)
@@ -20,8 +20,11 @@ find_package(Threads REQUIRED)
 
 # Incs and Libs
 set(INCLUDE_BASE ${PROJECT_SOURCE_DIR}/include)
-include_directories("/usr/local/ofed/include" ${INCLUDE_BASE})
+#include_directories("/usr/local/ofed/include" ${INCLUDE_BASE})
+include_directories("/usr/include" ${INCLUDE_BASE})
 link_libraries(${CRYPTO_LIBRARIES} ${CMAKE_DL_LIBS})
+link_libraries("/usr/lib/libibverbs.so")
+link_libraries("/usr/lib/x86_64-linux-gnu/libfuse.so")
 #message("---: ${CRYPTO_LIBRARIES}")
 
 # Source file define
@@ -39,7 +42,7 @@ find_package(JNI)
 include_directories(${JNI_INCLUDE_DIRS})
 #link_libraries(${JNI_LIBRARIES})
 message("===== ${JNI_INCLUDE_DIRS} =====lib:${JNI_LIBRARIES}")
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -L/usr/local/lib/libfuse.so")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -L/usr/lib/x86_64-linux-gnu/libfuse.so")
 set(CLIENT_BASE ${PROJECT_SOURCE_DIR}/client)
 set(CNET_SRC ${PROJECT_SOURCE_DIR}/src/net)
 set(CLIB_SRC ${PROJECT_SOURCE_DIR}/src/client)
